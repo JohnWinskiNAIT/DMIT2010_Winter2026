@@ -2,11 +2,23 @@ using UnityEngine;
 
 public class AIMovement : MonoBehaviour
 {
-    float movementSpeed;
+    float movementSpeed, forwardDist, sideDist;
+
+    RaycastHit forwardHit, rightHit, leftHit;
+
+    bool rightDetect, leftDetect;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         movementSpeed = 3.0f;
+        forwardDist = 1.0f;
+        sideDist = 3.0f;
+    }
+
+    private void Update()
+    {
+        DetectForward();
     }
 
     void FixedUpdate()
@@ -14,13 +26,52 @@ public class AIMovement : MonoBehaviour
         transform.Translate(Vector3.forward * movementSpeed * Time.fixedDeltaTime);
     }
 
-    private void OnTriggerEnter(Collider other)
+    void DetectForward()
     {
-        Debug.Log(other.transform.name);
-        if (other.transform.tag == "Wall")
+        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.forward, out forwardHit, forwardDist))
+        {
+            DetectSides();            
+        }
+    }
+
+    void DetectSides()
+    {
+        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.right, out rightHit, sideDist))
+        {
+            rightDetect = true;
+        }
+        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, -transform.right, out leftHit, sideDist))
+        {
+            leftDetect = true;
+        }
+
+        if (rightDetect && !leftDetect)
+        {
+            transform.Rotate(Vector3.up, -90);
+        }
+        else if (!rightDetect && leftDetect)
         {
             transform.Rotate(Vector3.up, 90);
         }
+        else if (rightDetect && leftDetect)
+        {
+            transform.Rotate(Vector3.up, 180);
+        }
+        else
+        {
+            transform.Rotate(Vector3.up, 90);
+        }
+
+        Debug.Log(forwardHit.transform.name);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log(other.transform.name);
+        //if (other.transform.tag == "Wall")
+        //{
+        //    transform.Rotate(Vector3.up, 90);
+        //}
     }
 
     private void OnCollisionEnter(Collision collision)
