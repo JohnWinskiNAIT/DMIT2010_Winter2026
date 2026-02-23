@@ -8,6 +8,8 @@ public class AIMovement : MonoBehaviour
 
     bool rightDetect, leftDetect;
 
+    [SerializeField] GameObject hitLocation;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,13 +32,16 @@ public class AIMovement : MonoBehaviour
     {
         if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.forward, out forwardHit, forwardDist))
         {
+            hitLocation.transform.position = forwardHit.point;
+
             rightDetect = false;
             leftDetect = false;
 
             DetectSides();
 
-            transform.LookAt(transform.position - forwardHit.normal);
-            
+            // The new Vector3 was added to avoid taking on the wall x or z rotation.
+            transform.LookAt(transform.position - new Vector3(forwardHit.normal.x, 0, forwardHit.normal.z));
+
             DetectSides();
 
             RotateFromObject();
