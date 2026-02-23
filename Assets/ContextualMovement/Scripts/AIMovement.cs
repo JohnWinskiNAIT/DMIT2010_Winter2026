@@ -30,7 +30,16 @@ public class AIMovement : MonoBehaviour
     {
         if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.forward, out forwardHit, forwardDist))
         {
-            DetectSides();            
+            rightDetect = false;
+            leftDetect = false;
+
+            DetectSides();
+
+            transform.LookAt(transform.position - forwardHit.normal);
+            
+            DetectSides();
+
+            RotateFromObject();
         }
     }
 
@@ -43,8 +52,11 @@ public class AIMovement : MonoBehaviour
         if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, -transform.right, out leftHit, sideDist))
         {
             leftDetect = true;
-        }
+        }        
+    }
 
+    void RotateFromObject()
+    {
         if (rightDetect && !leftDetect)
         {
             transform.Rotate(Vector3.up, -90);
@@ -61,8 +73,6 @@ public class AIMovement : MonoBehaviour
         {
             transform.Rotate(Vector3.up, 90);
         }
-
-        Debug.Log(forwardHit.transform.name);
     }
 
     private void OnTriggerEnter(Collider other)
