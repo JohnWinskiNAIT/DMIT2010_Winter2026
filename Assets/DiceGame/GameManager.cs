@@ -1,6 +1,6 @@
-using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -57,14 +57,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Escape)) 
+        if (Keyboard.current.escapeKey.wasPressedThisFrame) 
         {
             Application.Quit();
         }
 
         #region Debug: Alter dice
 
-        if (Input.GetKeyUp(KeyCode.Alpha1)) 
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             diceValues[0]++;
             if (diceValues[0] == 6)
@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
             }
             dice[0].GetComponent<Image>().sprite = diceSprites[diceValues[0]];
         }
-        if (Input.GetKeyUp(KeyCode.Alpha2))
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             diceValues[1]++;
             if (diceValues[1] == 6)
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
             }
             dice[1].GetComponent<Image>().sprite = diceSprites[diceValues[1]];
         }
-        if (Input.GetKeyUp(KeyCode.Alpha3))
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
         {
             diceValues[2]++;
             if (diceValues[2] == 6)
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
             }
             dice[2].GetComponent<Image>().sprite = diceSprites[diceValues[2]];
         }
-        if (Input.GetKeyUp(KeyCode.Alpha4))
+        if (Keyboard.current.digit4Key.wasPressedThisFrame)
         {
             diceValues[3]++;
             if (diceValues[3] == 6)
@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
             }
             dice[3].GetComponent<Image>().sprite = diceSprites[diceValues[3]];
         }
-        if (Input.GetKeyUp(KeyCode.Alpha5))
+        if (Keyboard.current.digit5Key.wasPressedThisFrame)
         {
             diceValues[4]++;
             if (diceValues[4] == 6)
@@ -108,15 +108,6 @@ public class GameManager : MonoBehaviour
                 diceValues[4] = 0;
             }
             dice[4].GetComponent<Image>().sprite = diceSprites[diceValues[4]];
-        }
-        if (Input.GetKeyUp(KeyCode.Alpha6))
-        {
-            diceValues[5]++;
-            if (diceValues[5] == 6)
-            {
-                diceValues[5] = 0;
-            }
-            dice[5].GetComponent<Image>().sprite = diceSprites[diceValues[5]];
         }
         #endregion
 
