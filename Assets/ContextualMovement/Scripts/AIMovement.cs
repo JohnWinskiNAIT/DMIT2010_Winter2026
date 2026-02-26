@@ -1,10 +1,15 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AIMovement : MonoBehaviour
 {
-    float movementSpeed, forwardDist, sideDist;
+    [SerializeField] float movementSpeed, forwardDist, sideDist;
 
     RaycastHit forwardHit, rightHit, leftHit;
+
+    [SerializeField] List<GameObject> targetList = new List<GameObject>();
+
+    LayerMask frontMask;
 
     bool rightDetect, leftDetect;
 
@@ -16,6 +21,7 @@ public class AIMovement : MonoBehaviour
         movementSpeed = 3.0f;
         forwardDist = 1.0f;
         sideDist = 3.0f;
+        frontMask = LayerMask.GetMask("Wall");
     }
 
     private void Update()
@@ -30,9 +36,13 @@ public class AIMovement : MonoBehaviour
 
     void DetectForward()
     {
-        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.forward, out forwardHit, forwardDist))
+        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.forward, out forwardHit, forwardDist, frontMask))
         {
-            hitLocation.transform.position = forwardHit.point;
+            if (hitLocation != null)
+            {
+                hitLocation.transform.position = forwardHit.point;
+            }
+            
 
             rightDetect = false;
             leftDetect = false;
@@ -50,11 +60,11 @@ public class AIMovement : MonoBehaviour
 
     void DetectSides()
     {
-        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.right, out rightHit, sideDist))
+        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, transform.right, out rightHit, sideDist, frontMask))
         {
             rightDetect = true;
         }
-        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, -transform.right, out leftHit, sideDist))
+        if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, -transform.right, out leftHit, sideDist, frontMask))
         {
             leftDetect = true;
         }        
@@ -82,11 +92,24 @@ public class AIMovement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log(other.transform.name);
+        Debug.Log(other.transform.name);
+
+        if (other.tag == "GoodObject")
+        {
+            targetList.Add(other.gameObject);
+        }
         //if (other.transform.tag == "Wall")
         //{
         //    transform.Rotate(Vector3.up, 90);
         //}
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "GoodObject")
+        {
+            targetList.Remove(other.gameObject);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
