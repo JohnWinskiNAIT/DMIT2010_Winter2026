@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 9060967381826244088}
   - component: {fileID: 1220294868238528251}
   - component: {fileID: 552588082830505271}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AIMover
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -167,6 +167,7 @@ MonoBehaviour:
   movementSpeed: 0
   forwardDist: 0
   sideDist: 0
+  targetList: []
   hitLocation: {fileID: 0}
 --- !u!54 &1220294868238528251
 Rigidbody:

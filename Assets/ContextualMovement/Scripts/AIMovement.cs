@@ -21,12 +21,17 @@ public class AIMovement : MonoBehaviour
         movementSpeed = 3.0f;
         forwardDist = 1.0f;
         sideDist = 3.0f;
-        frontMask = LayerMask.GetMask("Wall");
+        frontMask = LayerMask.GetMask("Wall") | LayerMask.GetMask("AIMover");
     }
 
     private void Update()
     {
         DetectForward();
+
+        if (targetList.Count > 0)
+        {
+            FollowObject();
+        }        
     }
 
     void FixedUpdate()
@@ -90,18 +95,35 @@ public class AIMovement : MonoBehaviour
         }
     }
 
+    void FollowObject()
+    {
+        if (targetList[0].activeSelf == true)
+        {
+            transform.LookAt(targetList[0].transform.position);
+
+            if (Vector3.Distance(transform.position, targetList[0].transform.position) < 0.2f)
+            {
+                targetList[0].SetActive(false);
+                targetList.RemoveAt(0);
+            }
+        }
+        else
+        {
+            targetList.RemoveAt(0);
+        }        
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.transform.name);
 
         if (other.tag == "GoodObject")
         {
-            targetList.Add(other.gameObject);
+            if (!targetList.Contains(other.gameObject))
+            {
+                targetList.Add(other.gameObject);
+            }            
         }
-        //if (other.transform.tag == "Wall")
-        //{
-        //    transform.Rotate(Vector3.up, 90);
-        //}
     }
 
     private void OnTriggerExit(Collider other)
@@ -110,16 +132,5 @@ public class AIMovement : MonoBehaviour
         {
             targetList.Remove(other.gameObject);
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        //Debug.Log(collision.transform.name);
-
-        //if (collision.transform.tag == "Wall")
-        //{
-        //    transform.Rotate(Vector3.up, 90);
-        //}
-        
     }
 }
