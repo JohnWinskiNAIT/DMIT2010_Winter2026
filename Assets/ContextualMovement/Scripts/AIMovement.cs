@@ -99,7 +99,10 @@ public class AIMovement : MonoBehaviour
     {
         if (targetList[0].activeSelf == true)
         {
+            // Look toward
             transform.LookAt(targetList[0].transform.position);
+            // Look Away
+            //transform.LookAt(transform.position + transform.position - targetList[0].transform.position);
 
             if (Vector3.Distance(transform.position, targetList[0].transform.position) < 0.2f)
             {
