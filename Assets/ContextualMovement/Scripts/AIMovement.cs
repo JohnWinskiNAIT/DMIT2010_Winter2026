@@ -15,6 +15,8 @@ public class AIMovement : MonoBehaviour
 
     [SerializeField] GameObject hitLocation;
 
+    [SerializeField] GameObject target;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -97,23 +99,46 @@ public class AIMovement : MonoBehaviour
 
     void FollowObject()
     {
-        if (targetList[0].activeSelf == true)
+        ObtainTarget();
+
+        if (target.activeSelf == true)
         {
             // Look toward
-            transform.LookAt(targetList[0].transform.position);
+            transform.LookAt(target.transform.position);
+                            
             // Look Away
             //transform.LookAt(transform.position + transform.position - targetList[0].transform.position);
 
-            if (Vector3.Distance(transform.position, targetList[0].transform.position) < 0.2f)
+            if (Vector3.Distance(transform.position, target.transform.position) < 1f)
             {
-                targetList[0].SetActive(false);
-                targetList.RemoveAt(0);
+                target.SetActive(false);
+                targetList.Remove(target);
             }
         }
         else
         {
-            targetList.RemoveAt(0);
+            targetList.Remove(target);
         }        
+    }
+
+    void ObtainTarget()
+    {
+        float closestDistance = 100;
+        foreach (GameObject instance in targetList)
+        {
+            if (Vector3.Distance(transform.position, instance.transform.position) < closestDistance)
+            {
+                if (Physics.CapsuleCast(transform.position + new Vector3(0, 0.5f, 0), transform.position + new Vector3(0, 1.5f, 0), 0.5f, instance.transform.position - transform.position, out forwardHit, Vector3.Distance(transform.position, instance.transform.position)))
+                {
+                    if (forwardHit.transform.tag != "Wall")
+                    {
+                        target = instance;
+                        closestDistance = Vector3.Distance(transform.position, instance.transform.position);
+                    }                    
+                }
+            }
+        }
+        
     }
 
     private void OnTriggerEnter(Collider other)
